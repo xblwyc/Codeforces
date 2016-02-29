@@ -49,94 +49,219 @@ vector<string> split(string s, string c)
         res.PB(s.substr(pos1));
     return res;
 }
-void add(LL &val1, LL val2)
-{
-    val1 += val2;
-    if(val1 >= MOD)
-        val1 %= MOD;
-}
+string s;
+int arr[100010];
 int n;
-struct CAKE{
-    int index, r,h;
-    LL vol;
-} cake[100100];
-LL tree[4 * 100100];
-bool comp(CAKE a, CAKE b)
-{
-    LL t1 = 1LL * a.r * a.r * a.h;
-    LL t2 = 1LL *b.r * b.r * b.h;
-    if(t1 == t2)
-        return a.index > b.index;
-    return t1 < t2;
-}
+int dp[100010][2][10];
 
-void build(int x, int l, int r)
+string ans1;
+string ans2;
+int rec(int pos, int c1, int c2)
 {
-    if(l == r)
+    if(dp[pos][c1][c2] != -1)
+        return dp[pos][c1][c2];
+    if(pos == n - 1 - pos)
     {
-        tree[x] = 0;
-        return;
+        int val = arr[pos];
+        if(c1)
+            val += 10;
+        if(c2)
+            val--;
+        if(val % 2 == 0)
+        {
+            ans1[pos] = val / 2 + '0';
+            return dp[pos][c1][c2] = 1;
+        }return dp[pos][c1][c2] = 0;
     }
-    int m = (l + r) / 2;
-    build(x * 2 + 1, l, m);
-    build(x * 2 + 2, m + 1, r);
-    tree[x] = 0;
+    if(pos + 1 == n - 1 - pos)
+    {
+        int val1 = arr[pos];
+        int val2 = arr[n - 1 - pos];
+        if(c1)
+            val1 += 10;
+        if(c2)
+            val2--;
+        int val = val1 * 10 + val2;
+        dp[pos][c1][c2] = 0;
+        for(int v1 = (pos == 0); v1 < 10; v1++)
+        {
+            for(int v2 = 0; v2 < 10 ;v2++)
+            {
+                if((v1 + v2) * 10 + v1 + v2 == val)
+                {
+                    ans1[pos] = '0' + v1;
+                    ans1[pos + 1] = '0' + v2;
+                    return dp[pos][c1][c2] = 1;
+                }
+            }
+        }
+        return dp[pos][c1][c2];
+    }
+    int val1 = arr[pos];
+    int val2 = arr[n - 1 - pos];
+    if(c1)
+        val1 += 10;
+    if(c2)
+        val2--;
+    dp[pos][c1][c2] = 0;
+    for(int v1 = (pos == 0); v1 < 10; v1++)
+    {
+        for(int v2 = 0; v2 < 10 ;v2++)
+        {
+            if(v1 + v2 == val1 && v1 + v2 == val2 && rec(pos + 1, 0,0))
+            {
+                ans1[pos] = '0' + v1;
+                ans1[n - 1 - pos] = '0' + v2;
+                return dp[pos][c1][c2] = 1;
+            }
+            if(v1 + v2 + 1 == val1 && v1 + v2 == val2 && rec(pos + 1, 1, 0))
+            {
+                ans1[pos] = '0' + v1;
+                ans1[n - 1 - pos] = '0' + v2;
+                return dp[pos][c1][c2] = 1;
+            }
+            if(v1 + v2 + 1 == val1 && v1 + v2 - 10 == val2 && rec(pos + 1, 1, 1))
+            {
+                ans1[pos] = '0' + v1;
+                ans1[n - 1 - pos] = '0' + v2;
+                return dp[pos][c1][c2] = 1;
+            }
+            if(v1 + v2  == val1 && v1 + v2 - 10 == val2 && rec(pos + 1, 0, 1))
+            {
+                ans1[pos] = '0' + v1;
+                ans1[n - 1 - pos] = '0' + v2;
+                return dp[pos][c1][c2] = 1;
+            }
+        }
+    }
+    return dp[pos][c1][c2];
 }
-void update(LL val, int pos,int x, int l, int r)
+int rec2(int pos, int c1, int c2)
 {
-    int m = (l + r) / 2;
-    if(pos <= l && pos >= r)
+
+    if(dp[pos][c1][c2] != -1)
+        return dp[pos][c1][c2];
+
+    if(pos + 1 == n - 1 - pos)
     {
-        tree[x] = val;
-        return;
+        int val = arr[pos + 1];
+        if(c1)
+            val += 10;
+        if(c2)
+            val--;
+        if(val % 2 == 0)
+        {
+            ans2[pos] = val / 2 + '0';
+            return dp[pos][c1][c2] = 1;
+        }
+        return dp[pos][c1][c2] = 0;
     }
-    if(pos < l)
-        return;
-    if(pos > r)
-        return;
-    update(val, pos, x * 2 + 1, l, m);
-    update(val, pos, x * 2 + 2, m + 1, r);
-    tree[x] = max(tree[x * 2 + 1], tree[x * 2 + 2]);
+    if(pos + 2 == n - 1 - pos)
+    {
+        int val1 = arr[pos + 1];
+        int val2 = arr[n - 1 - pos];
+        if(c1)
+            val1 += 10;
+        if(c2)
+            val2--;
+        int val = val1 * 10 + val2;
+        dp[pos][c1][c2] = 0;
+        for(int v1 = (pos == 0); v1 < 10; v1++)
+        {
+            for(int v2 = 0; v2 < 10 ;v2++)
+            {
+                if((v1 + v2) * 10 + v1 + v2 == val)
+                {
+                    ans2[pos] = '0' + v1;
+                    ans2[pos + 1] = '0' + v2;
+                    return dp[pos][c1][c2] = 1;
+                }
+            }
+        }
+        return dp[pos][c1][c2];
+    }
+    int val1 = arr[pos + 1];
+    int val2 = arr[n - 1 - pos];
+    if(c1)
+        val1 += 10;
+    if(c2)
+        val2--;
+    dp[pos][c1][c2] = 0;
+    for(int v1 = (pos == 0); v1 < 10; v1++)
+    {
+        for(int v2 = 0; v2 < 10 ;v2++)
+        {
+            if(v1 + v2 == val1 && v1 + v2 == val2 && rec2(pos + 1, 0,0))
+            {
+                ans2[pos] = '0' + v1;
+                ans2[n - 2 - pos] = '0' + v2;
+                return dp[pos][c1][c2] = 1;
+            }
+            if(v1 + v2 + 1 == val1 && v1 + v2 == val2 && rec2(pos + 1, 1, 0))
+            {
+                ans2[pos] = '0' + v1;
+                ans2[n - 2 - pos] = '0' + v2;
+                return dp[pos][c1][c2] = 1;
+            }
+            if(v1 + v2 + 1 == val1 && v1 + v2 - 10 == val2 && rec2(pos + 1, 1, 1))
+            {
+                ans2[pos] = '0' + v1;
+                ans2[n - 2 - pos] = '0' + v2;
+                return dp[pos][c1][c2] = 1;
+            }
+            if(v1 + v2  == val1 && v1 + v2 - 10 == val2 && rec2(pos + 1, 0, 1))
+            {
+                ans2[pos] = '0' + v1;
+                ans2[n - 2 - pos] = '0' + v2;
+                return dp[pos][c1][c2] = 1;
+            }
+        }
+    }
+    return dp[pos][c1][c2];
 }
-LL query(int L, int R, int x ,int l, int r)
+int check1()
 {
-    if(L <= l && R >= r)
-    {
-        return tree[x];
-    }
-    if(R < l)
+    NEG(dp);
+    int res = rec(0,0,0);
+    return res;
+}
+int check2()
+{
+    if(arr[0] != 1)
         return 0;
-    if(L > r)
-        return 0;
-    int m = (l + r) / 2;
-    return max(query(L, R, x * 2 + 1, l, m), query(L, R, x * 2 +2, m + 1, r));
+    NEG(dp);
+    int res = rec2(0,1,0);
+    return res;
 }
+string solve()
+{
+    ans1 = string(n, ' ');
+    ans2 = string(n - 1, ' ');
+    int res1 = check1();
+    if(res1)
+        return ans1;
+    int res2 = check2();
+    if(res2)
+        return ans2;
+    return "0";
+}
+//941 149 -> 1090
 int  main()
 {
     cin.tie(0);
     cin.sync_with_stdio(false);
-    cout << setprecision(15);
-    cin >> n;
+    cin >> s;
+    n = s.size();
     FOR(i,0,n)
+    arr[i] = s[i] - '0';
+    string res = solve();
+    if(res[0] == '0')
     {
-        cin >> cake[i].r;
-        cin >> cake[i].h;
-        cake[i].index = i;
-        cake[i].vol = 1LL * cake[i].r * cake[i].r  * cake[i].h;
-       // cout << cake[i].vol << endl;
+        for(int i = 0; i < res.size()  - 1- i; i++)
+            swap(res[i],res[res.size() - 1 - i]);
     }
-   // cout << "hah" << endl;
-   // ZERO(c);
-    sort(cake, cake + n , comp);
-    LL res = 0;
-    build(0,0, n - 1 );
-    for(int i = 0; i < n; i++ )
-    {
-        int ind = cake[i].index;
-        LL temp = query(0, ind - 1, 0, 0, n - 1);
-        res = max(res, temp + cake[i].vol);
-        update(temp + cake[i].vol,ind, 0, 0,n - 1);
-    }
-    cout << res * PI << endl;
+    cout << res << endl;
+    
     return 0;
+    
 }

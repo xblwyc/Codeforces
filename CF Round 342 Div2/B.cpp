@@ -49,38 +49,30 @@ vector<string> split(string s, string c)
         res.PB(s.substr(pos1));
     return res;
 }
-int n, k;
-int mat[510][510];
-int solve()
+
+string s1;
+string s2;
+LL solve()
 {
-    int count = 1;
-    FOR(i,0,n)
+    LL res = 0;
+    int pos = s1.find(s2);
+    while(pos != -1 && pos < s1.size())
     {
-        FOR(j,0,k - 1)
-        mat[i][j] = count++;
+        res++;
+        int poss = pos + s2.size();
+        if(poss >= s1.size())
+            break;
+        pos = s1.find(s2, poss);
     }
-    FOR(i,0,n)
-    {
-        FOR(j,k - 1,n)
-        mat[i][j] = count++;
-    }
-    int sum = 0;
-    FOR(i,0,n)
-    sum += mat[i][k - 1];
-    return sum;
+    return res;
 }
 int  main()
 {
     cin.tie(0);
     cin.sync_with_stdio(false);
-    cin >> n >> k;
-    NEG(mat);
+    cin >> s1 >> s2;
+
     cout << solve() << endl;
-    FOR(i,0,n)
-    {
-    FOR(j,0,n)
-    cout << mat[i][j] << " ";
-        cout << endl;
-    }return 0;
+    return 0;
     
 }

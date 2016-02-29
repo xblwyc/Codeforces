@@ -49,38 +49,44 @@ vector<string> split(string s, string c)
         res.PB(s.substr(pos1));
     return res;
 }
-int n, k;
-int mat[510][510];
-int solve()
+
+LL n,a,b,c;
+LL rec(LL nn)
 {
-    int count = 1;
-    FOR(i,0,n)
+    if(nn >= b)
     {
-        FOR(j,0,k - 1)
-        mat[i][j] = count++;
+        LL num = (nn - b) / (b - c);
+        if(num > 0)
+        {
+            LL cost = num * b;
+                LL back = num * c;
+            return num + rec(nn - cost + back);
+        }
+        else
+        {
+            num = nn / b;
+            LL cost = num * b;
+            LL back = num * c;
+            return num + rec(nn - cost + back);
+        }
     }
-    FOR(i,0,n)
+    else
     {
-        FOR(j,k - 1,n)
-        mat[i][j] = count++;
+        return nn / a;
     }
-    int sum = 0;
-    FOR(i,0,n)
-    sum += mat[i][k - 1];
-    return sum;
+}
+LL solve()
+{
+    if(b - c >= a)
+        return n / a;
+    return rec(n);
 }
 int  main()
 {
     cin.tie(0);
     cin.sync_with_stdio(false);
-    cin >> n >> k;
-    NEG(mat);
-    cout << solve() << endl;
-    FOR(i,0,n)
-    {
-    FOR(j,0,n)
-    cout << mat[i][j] << " ";
-        cout << endl;
-    }return 0;
+    cin >> n >> a >> b >> c;
+    cout << solve () << endl;
+    return 0;
     
 }
