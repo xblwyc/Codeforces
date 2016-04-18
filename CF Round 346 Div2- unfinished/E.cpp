@@ -46,40 +46,76 @@ void errDebug(T a, Args... args) {
     errDebug(args...);
 }
 
-int n;
-pair<LL,LL> a[1010];
-int calc(pair<LL,LL> b, pair<LL,LL> c, pair<LL,LL> d)
+struct Edge
 {
-    LL res = (d.F - b.F) * (c.S - b.S) - (c.F -b.F) * (d.S - b.S);
-    if(res < 0)
-        return 1;
-    else
-        return 0;
+    int from;
+    int to;
+    int weight;
+    
+    Edge(int f, int t, int w):from(f), to(t), weight(w) {}
+};
+const int N = 100100;
+vector<Edge> edges;
+vector<int> G[N]; // 每个节点出发的边编号
+
+void addEdge(int u, int v, int w)
+{
+    int index = edges.size();
+    edges.PB(Edge(u,v,w));
+    G[u].PB(index);
+}
+
+int n, m;
+int cnt;
+int vis[100100];
+bool circle;
+void DFS(int index, int par)
+{
+    if(vis[index])
+        return;
+    vis[index] = 1;
+    FOR(i,0,G[index].size())
+    {
+        int pos = G[index][i];
+        int v = edges[pos].to;
+        if(v == par)
+            continue;
+        if(!vis[v])
+            DFS(v, index);
+        else
+            circle = true;
+    }
+    
 }
 int solve()
 {
-    int res = 0;
-    FOR(i,0,n)
+    cnt = 0;
+    ZERO(vis);
+    FORE(i,1,n)
     {
-        int prev = i - 1;
-        int next = i + 1;
-        if(prev < 0)
-            prev += n;
-        if(next >= n)
-            next -= (n);
-        res += calc(a[prev], a[i], a[next]);
+        circle = false;
+        if(vis[i])
+            continue;
+        DFS(i, -1);
+        if(circle)
+            continue;
+        cnt++;
     }
-    return res;
+    return cnt;
 }
+
 int main()
 {
     cin.tie(0);
     cin.sync_with_stdio(false);
-    cin >> n;
-    FOR(i,0,n)
-    cin >> a[i].F >> a[i].S;
-    int u1,u2;
-    cin >> u1 >> u2;
+    cin >> n >> m;
+    int u,v;
+    FOR(i,0,m)
+    {
+        cin >> u >> v;
+        addEdge(u,v,1);
+        addEdge(v,u,1);
+    }
     cout << solve() << endl;
     return 0;
 }

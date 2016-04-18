@@ -45,41 +45,69 @@ void errDebug(T a, Args... args) {
     cerr << a << ' ';
     errDebug(args...);
 }
-
 int n;
-pair<LL,LL> a[1010];
-int calc(pair<LL,LL> b, pair<LL,LL> c, pair<LL,LL> d)
+string s;
+int y[10] = {1990, 1991,1992,1993,1994,1995,1996,1997,1998,1989};
+string solve()
 {
-    LL res = (d.F - b.F) * (c.S - b.S) - (c.F -b.F) * (d.S - b.S);
-    if(res < 0)
-        return 1;
-    else
-        return 0;
-}
-int solve()
-{
-    int res = 0;
-    FOR(i,0,n)
+    reverse(ALL(s));
+    int start = y[s[0] - '0'];
+    vector<int> res(100,0);
+    FOR(i,0,4)
     {
-        int prev = i - 1;
-        int next = i + 1;
-        if(prev < 0)
-            prev += n;
-        if(next >= n)
-            next -= (n);
-        res += calc(a[prev], a[i], a[next]);
+        res[i] = start % 10;
+        start /= 10;
     }
-    return res;
+    start = 1;
+
+    FOR(i,1,s.size())
+    {
+        int val = s[i] - '0';
+        if(res[start] >= 10)
+        {
+            res[start + 1]++;
+            res[start] %= 10;
+        }
+            if(val > res[start])
+                res[start] = val;
+            else
+                res[start] = 10 + val;
+        if(res[start] >= 10)
+        {
+            res[start + 1]++;
+            res[start] %= 10;
+        }
+        start++;
+    }
+    FOR(i,0,res.size() - 1)
+    {
+        if(res[i] >= 10)
+        {
+            int c = res[i] / 10;
+            res[i] %= 10;
+            res[i + 1] += c;
+        }
+    }
+    
+    string ans;
+    start = res.size() - 1;
+    while(start >= 0 && res[start] == 0)
+        start--;
+    for(int i = start; i >= 0; i--)
+    {
+        ans.PB(res[i] + '0');
+    }
+    return ans;
 }
-int main()
-{
+int main() {
     cin.tie(0);
     cin.sync_with_stdio(false);
     cin >> n;
     FOR(i,0,n)
-    cin >> a[i].F >> a[i].S;
-    int u1,u2;
-    cin >> u1 >> u2;
-    cout << solve() << endl;
+    {
+        cin >> s;
+        s = s.substr(4);
+        cout << solve() << endl;
+    }
     return 0;
 }

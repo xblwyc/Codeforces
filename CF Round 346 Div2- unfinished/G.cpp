@@ -47,27 +47,29 @@ void errDebug(T a, Args... args) {
 }
 
 int n;
-pair<LL,LL> a[1010];
-int calc(pair<LL,LL> b, pair<LL,LL> c, pair<LL,LL> d)
+LL a[1000100];
+LL dp[1000100][2];
+LL solve()
 {
-    LL res = (d.F - b.F) * (c.S - b.S) - (c.F -b.F) * (d.S - b.S);
-    if(res < 0)
-        return 1;
-    else
-        return 0;
-}
-int solve()
-{
-    int res = 0;
-    FOR(i,0,n)
+    // dp[i][0]-> remain < h[i + 1], dp[i][1]->remain >= h[i + 1];
+    ZERO(dp);
+    dp[0][0] = dp[0][1] = 0;
+    a[0] = 1e9;
+    a[n + 1] = 1e9;
+    FORE(i,1,n)
     {
-        int prev = i - 1;
-        int next = i + 1;
-        if(prev < 0)
-            prev += n;
-        if(next >= n)
-            next -= (n);
-        res += calc(a[prev], a[i], a[next]);
+        dp[i][0] += dp[i - 1][0] * (min(a[i + 1],min(a[i - 1], a[i])) - 1);
+        dp[i][1] += dp[i - 1][0] * max(0LL, min(a[i - 1], a[i]) - a[i + 1]);
+        dp[i][0] += min(a[i], a[i + 1]) - 1;
+        dp[i][1] += max(0LL, a[i] - a[i + 1]);
+        dp[i][0] %= MOD;
+        dp[i][1] %= MOD;
+    }
+    LL res = 0;
+    FORE(i,1,n)
+    {
+        res += (dp[i][0] + dp[i][1]);
+        res %= MOD;
     }
     return res;
 }
@@ -76,10 +78,8 @@ int main()
     cin.tie(0);
     cin.sync_with_stdio(false);
     cin >> n;
-    FOR(i,0,n)
-    cin >> a[i].F >> a[i].S;
-    int u1,u2;
-    cin >> u1 >> u2;
+    FORE(i,1,n)
+    cin >> a[i];
     cout << solve() << endl;
     return 0;
 }
