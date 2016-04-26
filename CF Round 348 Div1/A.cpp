@@ -45,40 +45,69 @@ void errDebug(T a, Args... args) {
     cerr << a << ' ';
     errDebug(args...);
 }
-LL tenPow(int exp)
+int m,n,q,x,y,val, ops;
+pair<int,int> g[110][110];
+int res[110][110];
+void solve()
 {
-    LL res = 1;
-    FOR(i,0,exp)
-    res *= 10;
-    return res;
+    if(ops == 3)
+    {
+        int xx = g[x][y].first;
+        int yy = g[x][y].second;
+        res[xx][yy] = val;
+    }
+    else if(ops == 1)
+    {
+        int r = val;
+        pair<int,int> f = g[r][0];
+        for(int i = 0; i < n - 1; i++)
+            g[r][i] = g[r][i + 1];
+        g[r][n - 1] = f;
+    }
+    else
+    {
+        int c = val;
+        pair<int,int> f = g[0][c];
+        for(int i = 0; i < m - 1; i++)
+            g[i][c] = g[i + 1][c];
+        g[m - 1][c] = f;
+    }
 }
-pair<int,int> conv(string s)
-{
-    // 0.4(2) = x, 4.(2) = 10x , 42.(2) = 100x 90x = 38 x = 3
-    // 0.000125(6);
-    // 1239.00000(2);
-    // (1239000002 - 123900000) / (10^6 - 10^5) 
-    int pos = s.find("(");
-    string s1 = s.substr(0,pos);
-    string s2 = s.substr(pos + 1);
-    pos = s1.find(".");
-    string s11 = s1.substr(0,pos);
-    string s12 = s1.substr(pos + 1);
-    int first = stoi(s11);
-    int second = stoi(s12);
-    int third = stoi(s2);
-    int base1 = tenPow(s11.size());
-    int base2 = tenPow(s11.size() + s2.size());
-    int dividend = first * base2 + second * base1 + third;
-    dividend -= first * base1 + second;
-    int divide = base2 - base1;
-    int g = __gcd(dividend, divide);
-    return MP(dividdend/g,  divide / g);
-
-
-
-}
-int main()
-{
-
+int main() {
+    
+    cin.tie(0);
+    cin.sync_with_stdio(false);
+    cin >> m >> n >> q;
+    FOR(i,0,m)
+    FOR(j,0,n)
+    g[i][j] = MP(i,j);
+    FUL(res);
+    FOR(i,0,q)
+    {
+        cin >> ops;
+        if(ops == 3)
+        {
+            cin >> x >> y >> val;
+            x--;
+            y--;
+        }
+        else
+        {
+            cin >> val;
+            val--;
+        }
+        solve();
+    }
+    FOR(i,0,m)
+    {
+        FOR(j,0,n)
+        {
+            if(res[i][j] == INF)
+                cout << 1 << " ";
+            else
+                cout << res[i][j] << " ";
+        }
+        cout << endl;
+    }
+        return 0;
 }

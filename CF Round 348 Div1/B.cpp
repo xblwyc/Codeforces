@@ -45,40 +45,69 @@ void errDebug(T a, Args... args) {
     cerr << a << ' ';
     errDebug(args...);
 }
-LL tenPow(int exp)
+int n, q;
+int a[2][1000000];
+int flag;
+int ops;
+int dir;
+int start[2];
+int len;
+void solve()
 {
-    LL res = 1;
-    FOR(i,0,exp)
-    res *= 10;
-    return res;
+    start[0] -= dir / 2;
+    start[1] -= dir / 2;
+    start[0] += len;
+    start[1] += len;
+    start[1] %= len;
+    start[0] %= len;
 }
-pair<int,int> conv(string s)
-{
-    // 0.4(2) = x, 4.(2) = 10x , 42.(2) = 100x 90x = 38 x = 3
-    // 0.000125(6);
-    // 1239.00000(2);
-    // (1239000002 - 123900000) / (10^6 - 10^5) 
-    int pos = s.find("(");
-    string s1 = s.substr(0,pos);
-    string s2 = s.substr(pos + 1);
-    pos = s1.find(".");
-    string s11 = s1.substr(0,pos);
-    string s12 = s1.substr(pos + 1);
-    int first = stoi(s11);
-    int second = stoi(s12);
-    int third = stoi(s2);
-    int base1 = tenPow(s11.size());
-    int base2 = tenPow(s11.size() + s2.size());
-    int dividend = first * base2 + second * base1 + third;
-    dividend -= first * base1 + second;
-    int divide = base2 - base1;
-    int g = __gcd(dividend, divide);
-    return MP(dividdend/g,  divide / g);
+int main() {
 
+    scanf("%d%d", &n, &q);
+    start[0] = start[1] = 0;
+    len = n / 2;
+    FOR(i,0,n)
+    {
+        if(i % 2 == 0)
+        {
+            a[0][start[0]++] = i + 1;
+        }
+        else
+            a[1][start[1]++] = i + 1;
+    }
+    start[0] = start[1] = 0;
+    flag = 0;
+    FOR(i,0,q)
+    {
+        scanf("%d", &ops);
+        if(ops == 2)
+            flag ^= 1;
+        else
+        {
+            scanf("%d", &dir);
+            if(dir % 2 != 0)
+            {
+                dir++;
+                start[flag]++;
+                start[flag] += len;
+                start[flag] %= len;
+                flag ^= 1;
+            }
+            solve();
+        }
+    }
+    FOR(i,0,n)
+    {
+        if(i % 2 == 0)
+        {
+            printf("%d ",a[flag][start[flag]++]);
+        }
+        else
+            printf("%d ",a[flag ^ 1][start[flag ^ 1]++]);
 
-
-}
-int main()
-{
-
+        start[1] %= len;
+        start[0] %= len;
+    }
+    cout << endl;
+    return 0;
 }
