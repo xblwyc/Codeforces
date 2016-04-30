@@ -1,4 +1,5 @@
 A - Reberland Linguistics
+
 大意就是有一个字符串s，想把他分成root+若干个appendstring的形式，appendstring长度为2或者3，appendstring相邻两个不能相同，让记录一下可能的分割中所有的appendstring。
 
 一开始看错题了以为appendstring里不能有相同的，结果想了一个小时也没想出来。。后来发现是相邻2个不能相同。
@@ -8,6 +9,7 @@ A - Reberland Linguistics
 所以用一个数组记忆一下之前访问的情况即可，每个index分为长度2和长度3。还有一个问题就是我用递归写会爆栈，所以改用了queue实现。
 
 B - World Tour
+
 大意就是给定一个有向图，n<3000,m < 5000，求4个点a,b,c,d，使得a->b的最短距离+b->c的最短距离+c->d的最短距离最大。
 
 首先用SPFA算出任意两点的最短距离，记录在d[i][j]中。
