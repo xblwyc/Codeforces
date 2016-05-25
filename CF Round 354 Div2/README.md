@@ -14,6 +14,8 @@ D - Theseus and labyrinth
 
 纯模拟题，BFS搜即可，用dp[i][j][k]记录一下是否曾经访问过，i,j表示坐标， 0 <= k <= 3表示rotate了多少次。
 
-E - Trains and Statistic
-从后往前，这个是key。。
-待完成。。
+E - The Last Fight Between Human and AI
+
+先注意handle k = 0的情况，这种情况下只有a[0] = 0，或者a[0] = ？ 但是人类先手才可以。
+如果k != 0，先验证是否全部已经propose过了，如果是的话那么验证一下即可。
+如果剩余有问号，偶数个时后手赢，奇数个时先手赢，其余情况都是输，分别考虑即可。
